@@ -222,6 +222,11 @@ var STATUS_MSG = {
       statusCode: 400,
       customMessage: "Your link has expired. Please sign in again.",
       type: "SSO_STRING_EXPIRED"
+    },
+    INVALID_LOCATION: {
+      statusCode: 400,
+      customMessage: "Invalid location value",
+      type: "INVALID_LOCATION"
     }
   },
   SUCCESS: {

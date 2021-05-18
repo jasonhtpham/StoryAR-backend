@@ -32,14 +32,15 @@ const addStoryApi = {
     validate: {
       payload: Joi.object({
         title: Joi.string().required(),
-        desc: Joi.string().required(),
+        description: Joi.string().required(),
         assets: Joi.array().items(
           Joi.object({
-            id: Joi.number().required(),
-            type: Joi.string().required(),
-            lat: Joi.number().required(),
-            long: Joi.number().required(),
-            assetDesc: Joi.string().required(),
+            assetType: Joi.string().required(),
+            coordinates: Joi.array().items(
+              Joi.number().required(), 
+              Joi.number().required()
+            ),
+            assetDescription: Joi.string().required(),
           })
         ),
         aim: Joi.string().required(),

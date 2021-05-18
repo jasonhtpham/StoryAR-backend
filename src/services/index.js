@@ -8,4 +8,5 @@ export default {
   AdminService: new GenericService('Admin'),
   TokenService: new GenericService('Token'),
   SSOManagerService: new GenericService('SSO'),
+  StoryService: new GenericService('Story')
 };
