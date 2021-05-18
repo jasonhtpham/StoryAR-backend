@@ -15,21 +15,22 @@
  import UniversalFunctions from "../../utils/universalFunctions";
 
  const ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS;
+ const _ = require("underscore");
 
 /**
  * 
  * @param {Object} payload the payload contains story object 
  * @param {Function} callback 
  */
-const addStory = (payload, callback) => {
-  let dataToSave = payload;
+const addStory = (payloadData, callback) => {
+  let dataToSave = payloadData;
   let storyData = null;
 
   async.series(
     [
       (cb) => {
         // Validate assets
-        if (payload.assets.length == 0) cb(ERROR.CUSTOM_ERROR("Assets are required", 400));
+        if (payloadData.assets.length == 0) cb(ERROR.CUSTOM_ERROR("Assets are required", 400));
         else cb();
 
       },
@@ -37,7 +38,7 @@ const addStory = (payload, callback) => {
         let assetsToSave = [];
 
         // Validate coordinates and construct assetsToSave
-        payload.assets.forEach(asset => {
+        payloadData.assets.forEach(asset => {
           if (asset.coordinates.length != 2) cb(ERROR.STATUS_MSG.INVALID_LOCATION);
           const assetToSave = {
             assetDescription: asset.assetDescription,
@@ -56,7 +57,7 @@ const addStory = (payload, callback) => {
       },
       (cb) => {
         //Validate aim
-        if (!payload.aim) cb(ERROR.CUSTOM_ERROR("Missing aim", 400));
+        if (!payloadData.aim) cb(ERROR.CUSTOM_ERROR("Missing aim", 400));
         else cb();
       },
       (cb) => {
@@ -81,17 +82,65 @@ const addStory = (payload, callback) => {
       }
     }
   );
-
 };
 
 const getAllStory = (callback) => {
-  // appLogger.info(payload);
-  return callback(null, "getAllStory api hit");
+  let storyData = null;
+
+  async.series(
+    [
+      (cb) => {
+        // Retrieve all data from DB
+        const projection = { title: 1};
+        Service.StoryService.getRecord({}, projection, (err, storyDataFromDB) => {
+          if (err) {
+              cb(err);
+          } else {
+            storyData = storyDataFromDB;
+            cb();
+          }
+        });
+      }
+    ],
+    (err, data) => {
+      if (err) callback(err);
+      else {
+        callback(null,
+          storyData
+        );
+      }
+    }
+  );
 };
 
-const getStory = (storyId, callback) => {
-  appLogger.info(storyId);
-  return callback(null, storyId);
+const getStory = (payloadData, callback) => {
+  let storyData = null;
+
+  async.series(
+    [
+      (cb) => {
+        // Retrieve all data of an entry matched provided "storyId" from DB
+        const query = {_id : payloadData.storyId};
+        const projection = {__v: 0};
+        Service.StoryService.getRecord(query, projection, (err, storyDataFromDB) => {
+          if (err) {
+              cb(err);
+          } else {
+            storyData = storyDataFromDB;
+            cb();
+          }
+        });
+      }
+    ],
+    (err, data) => {
+      if (err) callback(err);
+      else {
+        callback(null,
+          storyData
+        );
+      }
+    }
+  );
 };
 
 export default {

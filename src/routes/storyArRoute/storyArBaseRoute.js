@@ -99,9 +99,9 @@ const getStoryByIdApi = {
     description: "get story by id api",
     tags: ["api", "storyar"],
     handler: function (request, h) {
-      const storyId = request.params.storyId;
+      const payloadData = request.params;
       return new Promise((resolve, reject) => {
-        Controller.StoryArBaseController.getStory(storyId, function (
+        Controller.StoryArBaseController.getStory(payloadData, function (
           err,
           data
         ) {
