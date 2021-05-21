@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #give permission for everything in the express-app directory
-sudo chmod -R 777 /home/storyar/StoryAR-backend
+sudo chmod -R 777 /home/ubuntu/storyar/StoryAR-backend
 
 #navigate into our working directory where we have all our github files
-cd /home/storyar/StoryAR-backend
+cd /home/ubuntu/storyar/StoryAR-backend
 
 # #add npm and node to path
 # export NVM_DIR="$HOME/.nvm"	
