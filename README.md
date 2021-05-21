@@ -101,3 +101,18 @@ $ npm run deployment
 ```
 
 The current version of your application would be running on **http://localhost:8000** or **http://IP_OF_SERVER:8000** (in case you are running on the server)
+
+
+## Story AR
+
+# For AWS CodeDeploy setup
+```
+#!/bin/bash
+sudo yum -y update
+sudo yum -y install ruby
+sudo yum -y install wget
+cd /home/ubuntu/storyar/StoryAR-backend
+wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
+sudo chmod +x ./install
+sudo ./install auto
+```

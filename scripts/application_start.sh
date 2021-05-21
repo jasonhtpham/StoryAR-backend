@@ -14,8 +14,15 @@ cd /home/ubuntu/storyar/StoryAR-backend
 #install node modules
 npm install
 
+#install babel packages
+npm i -g @babel/core @babel/node @babel/cli
+
+#copy .env.example to .env
+cp .env.example .env
+
+
 #build package
-npm build
+npm run build
 
 #run deployment
 npm run deployment
