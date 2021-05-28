@@ -37,14 +37,12 @@ jobs:
       # Runs a set of commands using the runners shell
       # - name: Update changes
       #   run: |
-      #     cd /home/ubuntu/story-ar/StoryAR-backend/
       #     git pull
       #     npm install
 
       - name: Check
         run: |
-          pwd
-          ls
+          pm2 status
       
       # Restart application
       # - name: Restart application
