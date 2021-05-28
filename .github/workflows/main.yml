@@ -37,7 +37,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Update changes
         run: |
-          cd story-ar/StoryAR-backend/
+          cd /home/ubuntu/story-ar/StoryAR-backend/
           git pull
           npm install
       
