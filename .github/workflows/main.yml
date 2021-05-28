@@ -27,7 +27,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Connect to server using ssh
-        run: ssh -i ${{secrets.SERVER_PRIVATE_KEY}} ubuntu@ec2-13-210-139-210.ap-southeast-2.compute.amazonaws.com
+        run: |
+          eval `ssh-agent`
+          ssh-add - <<< "${secrets.SERVER_PRIVATE_KEY}"
+          ssh ubuntu@ec2-13-210-139-210.ap-southeast-2.compute.amazonaws.com
 
       # Runs a set of commands using the runners shell
       - name: Update changes

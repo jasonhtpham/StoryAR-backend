@@ -45,7 +45,7 @@ const addStory = (payloadData, callback) => {
             assetType: asset.assetType,
             location: {
               type: "Point",
-              coordinates: asset.coordinates
+              coordinates: asset.coordinates // [long,lat]
             }
           }
           assetsToSave = [...assetsToSave, assetToSave];
