@@ -6,7 +6,7 @@
  
  var userExtendedProfile = new Schema({
     userId: { type: Schema.ObjectId, ref: 'user' },
-    lastNotificationTime: { type: Date },
+    lastUpdated: { type: Number },
     favouriteModules: [
         {
             programId: { type: Number },
