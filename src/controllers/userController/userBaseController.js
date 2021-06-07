@@ -39,7 +39,7 @@ const createUser = (payloadData, callback) => {
             if (data && data.length > 0) {
               if (data[0].emailVerified == true) cb(ERROR.USER_ALREADY_REGISTERED);
               else {
-                Service.UserService.deleteUser({ _id: data[0]._id }, (err, updatedData) => {
+                Service.UserService.deleteRecord({ _id: data[0]._id }, (err, updatedData) => {
                   if (err) cb(err);
                   else cb(null);
                 });
@@ -252,9 +252,11 @@ const loginUser = (payloadData, callback) => {
               UniversalFunctions.CryptData(payloadData.password)
             ) {
               cb(ERROR.INCORRECT_PASSWORD);
-            } else if (userFound.emailVerified == false) {
-              cb(ERROR.NOT_REGISTERED);
-            } else {
+            } 
+            // else if (userFound.emailVerified == false) {
+            //   cb(ERROR.NOT_REGISTERED);
+            // } 
+            else {
               successLogin = true;
               cb();
             }
@@ -868,6 +870,77 @@ var resetPassword = function (payloadData, callbackRoute) {
   );
 };
 
+const initialProfileSetup = function (userData, payloadData, callback) {
+  var customerData;
+  async.series(
+    [
+      function (cb) {
+        var query = {
+          _id: userData.userId
+        };
+        var options = { lean: true };
+        Service.UserService.getRecord(query, {}, options, function (err, data) {
+          if (err) {
+            cb(err);
+          } else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              customerData = (data && data[0]) || null;
+              if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
+            }
+          }
+        });
+      },
+      function (cb) {
+        let criteria = {
+          userId: customerData._id
+        };
+        let projection = {
+          about: 1,
+        };
+        Service.UserExtendedProfileService.getUserExtendedProfile(criteria, projection, {}, function (err, data) {
+          if (err) cb(err);
+          else {
+            if (data !== null && data !== undefined && data.length > 0) {
+              if (data.about !== undefined && data.about !== null)
+                cb(ERROR.PROFILE_ALREADY_SETUP);
+              else cb();
+            } else cb();
+          }
+        });
+      },
+      function (cb) {
+        let dataToSet = {
+          userId: customerData._id,
+          about: payloadData.about,
+        };
+        Service.UserExtendedProfileService.createUserExtendedProfile(dataToSet, function (err, data) {
+          if (err) cb(err);
+          else {
+            let criteria = {
+              _id: customerData._id
+            };
+            let dataToSet = {
+              profileSetup: true,
+              firstLogin: false
+            };
+            Service.UserService.updateRecord(criteria, dataToSet, {}, function (err, data) {
+              if (err) cb(err);
+              else cb();
+            });
+          }
+        });
+      }
+    ],
+    function (err, result) {
+      if (err) callback(err);
+      else callback(null, {});
+    }
+  );
+};
+
+
 export default {
   createUser: createUser,
   verifyOTP: verifyOTP,
@@ -877,6 +950,7 @@ export default {
   accessTokenLogin: accessTokenLogin,
   logoutCustomer: logoutCustomer,
   getProfile: getProfile,
+  initialProfileSetup: initialProfileSetup,
   changePassword: changePassword,
   forgetPassword: forgetPassword,
   resetPassword: resetPassword

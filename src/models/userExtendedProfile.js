@@ -1,0 +1,21 @@
+/**
+ * Created by Navit on 15/11/16.
+ */
+ import mongoose, { Schema } from "mongoose";
+//  var Config = require("../config");
+ 
+ var userExtendedProfile = new Schema({
+    userId: { type: Schema.ObjectId, ref: 'user' },
+    lastNotificationTime: { type: Date },
+    favouriteModules: [
+        {
+            programId: { type: Number },
+            id: { type: Number },
+            moduleId: { type: Schema.ObjectId, ref: 'modules' }
+        }
+    ],
+    about: { type: String }
+    // profilePhoto: { type: File}
+ });
+ 
+ module.exports = mongoose.model("userExtendedProfile", userExtendedProfile);

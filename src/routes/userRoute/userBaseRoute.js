@@ -364,6 +364,46 @@ const getProfile = {
   }
 };
 
+const initialProfileSetup = {
+  method: "POST",
+  path: "/api/user/initialProfile",
+  handler: function (request, h) {
+    return new Promise((resolve, reject) => {
+      var userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      var payloadData = request.payload;
+      Controller.UserBaseController.initialProfileSetup(userData, payloadData, function (err, data) {
+        if (!err) {
+          resolve(UniversalFunctions.sendSuccess(null, data));
+        } else {
+          reject(UniversalFunctions.sendError(err));
+        }
+      });
+    });
+  },
+  config: {
+    description: "Setup initial profile for a user",
+    tags: ["api", "user", "initial profile"],
+    auth: "UserAuth",
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      payload: Joi.object({
+        about: Joi.string().required(),
+      }),
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
 const changePassword = {
   method: "PUT",
   path: "/api/user/changePassword",
@@ -531,6 +571,7 @@ export default [
   accessTokenLogin,
   logoutCustomer,
   getProfile,
+  initialProfileSetup,
   changePassword,
   forgotPassword,
   resetPassword

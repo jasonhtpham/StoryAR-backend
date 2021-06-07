@@ -21,7 +21,13 @@ const user = new Schema({
   emailVerified: { type: Boolean, default: false },
   registrationDate: { type: Date, default: Date.now },
   codeUpdatedAt: { type: Date, default: Date.now, required: true },
-  isBlocked: { type: Boolean, default: false, required: true }
+  isBlocked: { type: Boolean, default: false, required: true },
+  profileSetup: { type: Boolean, default: false, required: true },
+  userName: { type: String, trim: true },
+  profilePicture: {
+    original: { type: String },
+    thumbnail: { type: String }
+  },
 });
 
 export default mongoose.model("user", user);
