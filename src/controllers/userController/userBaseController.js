@@ -252,7 +252,7 @@ const loginUser = (payloadData, callback) => {
               UniversalFunctions.CryptData(payloadData.password)
             ) {
               cb(ERROR.INCORRECT_PASSWORD);
-            } 
+            }
             // else if (userFound.emailVerified == false) {
             //   cb(ERROR.NOT_REGISTERED);
             // } 
@@ -872,6 +872,7 @@ var resetPassword = function (payloadData, callbackRoute) {
 
 const initialProfileSetup = function (userData, payloadData, callback) {
   var customerData;
+  let dataToSet;
   async.series(
     [
       function (cb) {
@@ -917,20 +918,22 @@ const initialProfileSetup = function (userData, payloadData, callback) {
           // lastUpdate: Date.now()
         };
         Service.UserExtendedProfileService.createUserExtendedProfile(dataToSet, function (err, data) {
-          if (err) cb(err);
-          else {
-            let criteria = {
-              _id: customerData._id
-            };
-            let dataToSet = {
-              profileSetup: true,
-              firstLogin: false
-            };
-            Service.UserService.updateRecord(criteria, dataToSet, {}, function (err, data) {
-              if (err) cb(err);
-              else cb();
-            });
-          }
+          if (err) return cb(err);
+          dataToSet = {
+            profileSetup: true,
+            firstLogin: false
+          };
+          cb();
+        });
+      },
+      (cb) => {
+        if (dataToSet === undefined) return cb();
+        let criteria = {
+          _id: customerData._id
+        };
+        Service.UserService.updateRecord(criteria, dataToSet, {}, function (err, data) {
+          if (err) return cb(err);
+          cb();
         });
       }
     ],
@@ -946,28 +949,28 @@ var getAdditionalInfo = function (userData, callback) {
   async.series(
     [
       function (cb) {
-          var query = {
-            _id: userData.userId
-          }
-          var projection = {
-            __v: 0,
-            password: 0,
-            accessToken: 0,
-            codeUpdatedAt: 0
-          };
-          var options = { lean: true };
-          Service.UserService.getRecord(query, projection, options, function (err, data) {
-            if (err) {
-              cb(err);
-            } else {
-              if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-              else {
-                customerData = (data && data[0]) || null;
-                if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
-                else cb();
-              }
+        var query = {
+          _id: userData.userId
+        }
+        var projection = {
+          __v: 0,
+          password: 0,
+          accessToken: 0,
+          codeUpdatedAt: 0
+        };
+        var options = { lean: true };
+        Service.UserService.getRecord(query, projection, options, function (err, data) {
+          if (err) {
+            cb(err);
+          } else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              customerData = (data && data[0]) || null;
+              if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
             }
-          });
+          }
+        });
       },
       function (cb) {
         let criteria = {
@@ -998,28 +1001,28 @@ var updateInitialInfo = function (userData, payloadData, callback) {
   async.series(
     [
       function (cb) {
-          var query = {
-            _id: userData.userId
-          };
-          var projection = {
-            __v: 0,
-            password: 0,
-            accessToken: 0,
-            codeUpdatedAt: 0
-          };
-          var options = { lean: true };
-          Service.UserService.getRecord(query, projection, options, function (err, data) {
-            if (err) {
-              cb(err);
-            } else {
-              if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-              else {
-                customerData = (data && data[0]) || null;
-                if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
-                else cb();
-              }
+        var query = {
+          _id: userData.userId
+        };
+        var projection = {
+          __v: 0,
+          password: 0,
+          accessToken: 0,
+          codeUpdatedAt: 0
+        };
+        var options = { lean: true };
+        Service.UserService.getRecord(query, projection, options, function (err, data) {
+          if (err) {
+            cb(err);
+          } else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              customerData = (data && data[0]) || null;
+              if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
             }
-          });
+          }
+        });
       },
       function (cb) {
         let criteria = {

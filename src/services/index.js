@@ -7,7 +7,7 @@ import UserExtendedProfileService from './userExtendedProfileService'
 export default {
   UserService: new GenericService('User'),
   ForgetPasswordService,
-  UserExtendedProfileService,
+  UserExtendedProfileService: new GenericService(''),
   AdminService: new GenericService('Admin'),
   TokenService: new GenericService('Token'),
   SSOManagerService: new GenericService('SSO'),
