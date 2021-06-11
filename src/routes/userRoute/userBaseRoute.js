@@ -364,6 +364,46 @@ const getProfile = {
   }
 };
 
+const initialProfileSetup = {
+  method: "POST",
+  path: "/api/user/initialProfile",
+  handler: function (request, h) {
+    return new Promise((resolve, reject) => {
+      var userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      var payloadData = request.payload;
+      Controller.UserBaseController.initialProfileSetup(userData, payloadData, function (err, data) {
+        if (!err) {
+          resolve(UniversalFunctions.sendSuccess(null, data));
+        } else {
+          reject(UniversalFunctions.sendError(err));
+        }
+      });
+    });
+  },
+  config: {
+    description: "Setup initial profile for a user",
+    tags: ["api", "user", "initial profile"],
+    auth: "UserAuth",
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      payload: Joi.object({
+        about: Joi.string().required(),
+      }),
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
 const changePassword = {
   method: "PUT",
   path: "/api/user/changePassword",
@@ -522,6 +562,101 @@ const resetPassword = {
   }
 };
 
+const getAdditionalInfo = {
+  method: "GET",
+  path: "/api/user/additionalInfo",
+  options: {
+    description: "get additional info of user",
+    auth: "UserAuth",
+    tags: ["api", "user"],
+    handler: function (request, h) {
+      const userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      return new Promise((resolve, reject) => {
+        if (userData && userData._id) {
+          Controller.UserBaseController.getAdditionalInfo(userData, function (
+            error,
+            success
+          ) {
+            if (error) {
+              reject(UniversalFunctions.sendError(error));
+            } else {
+              resolve(
+                UniversalFunctions.sendSuccess(
+                  UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.SUCCESS
+                    .DEFAULT,
+                  success
+                )
+              );
+            }
+          });
+        } else {
+          reject(
+            UniversalFunctions.sendError(
+              UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
+                .INVALID_TOKEN
+            )
+          );
+        }
+      });
+    },
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        security: [{ 'user': {} }],
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
+const updateInitialInfo = {
+  method: "PUT",
+  path: "/api/user/additionalInfo",
+  handler: function (request, h) {
+    return new Promise((resolve, reject) => {
+      const userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      const payloadData = request.payload;
+      Controller.UserBaseController.updateInitialInfo(userData, payloadData, function (err, data) {
+        if (!err) {
+          resolve(UniversalFunctions.sendSuccess(null, data));
+        } else {
+          reject(UniversalFunctions.sendError(err));
+        }
+      });
+    });
+  },
+  config: {
+    description: "Update additional info for a user",
+    tags: ["api", "user", "initial profile"],
+    auth: "UserAuth",
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      payload: {
+        about: Joi.string().required(),
+      },
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
 export default [
   userRegister,
   verifyOTP,
@@ -531,7 +666,10 @@ export default [
   accessTokenLogin,
   logoutCustomer,
   getProfile,
+  initialProfileSetup,
   changePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  updateInitialInfo,
+  getAdditionalInfo,
 ];
