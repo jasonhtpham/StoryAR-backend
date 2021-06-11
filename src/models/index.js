@@ -6,8 +6,8 @@ import Admin from './admin';
 import Token from './token';
 import SSO from './sso';
 import Story from './story';
+import UserExtendedProfile from './userExtendedProfile';
 
-const UserExtendedProfile = require('./userExtendedProfile');
 const ForgetPassword = require('./forgotPasswordRequest');
 
 export default {

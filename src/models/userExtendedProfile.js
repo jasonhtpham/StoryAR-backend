@@ -18,4 +18,4 @@
     // profilePhoto: { type: File}
  });
  
- module.exports = mongoose.model("userExtendedProfile", userExtendedProfile);
+export default mongoose.model("userExtendedProfile", userExtendedProfile);

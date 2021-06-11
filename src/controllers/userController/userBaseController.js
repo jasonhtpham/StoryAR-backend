@@ -900,7 +900,7 @@ const initialProfileSetup = function (userData, payloadData, callback) {
         let projection = {
           about: 1,
         };
-        Service.UserExtendedProfileService.getUserExtendedProfile(criteria, projection, {}, function (err, data) {
+        Service.UserExtendedProfileService.getRecord(criteria, projection, {}, function (err, data) {
           if (err) cb(err);
           else {
             if (data !== null && data !== undefined && data.length > 0) {
@@ -912,12 +912,12 @@ const initialProfileSetup = function (userData, payloadData, callback) {
         });
       },
       function (cb) {
-        let dataToSet = {
+        const dataToSave = {
           userId: customerData._id,
           about: payloadData.about,
           // lastUpdate: Date.now()
         };
-        Service.UserExtendedProfileService.createUserExtendedProfile(dataToSet, function (err, data) {
+        Service.UserExtendedProfileService.createRecord(dataToSave, function (err, data) {
           if (err) return cb(err);
           dataToSet = {
             profileSetup: true,
@@ -980,7 +980,7 @@ var getAdditionalInfo = function (userData, callback) {
           about: 1,
           // lastUpdate: 1
         };
-        Service.UserExtendedProfileService.getUserExtendedProfile(criteria, projection, {}, function (err, data) {
+        Service.UserExtendedProfileService.getRecord(criteria, projection, {}, function (err, data) {
           if (err) cb(err);
           else {
             info = (data && data[0]) || null;
@@ -1032,7 +1032,7 @@ var updateInitialInfo = function (userData, payloadData, callback) {
           about: 1,
           // lastUpdated: 1
         };
-        Service.UserExtendedProfileService.getUserExtendedProfile(criteria, projection, {}, function (err, data) {
+        Service.UserExtendedProfileService.getRecord(criteria, projection, {}, function (err, data) {
           if (err) cb(err);
           else {
             if (data !== null && data !== undefined && data.length > 0) {
@@ -1049,7 +1049,7 @@ var updateInitialInfo = function (userData, payloadData, callback) {
           about: payloadData.about,
           // lastUpdate: Math.floor(Date.now() / 1000)
         };
-        Service.UserExtendedProfileService.updateUserExtendedProfile(criteria, dataToSet, {}, function (err, data) {
+        Service.UserExtendedProfileService.updateRecord(criteria, dataToSet, {}, function (err, data) {
           if (err) cb(err);
           else cb();
         });
