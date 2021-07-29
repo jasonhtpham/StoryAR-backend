@@ -49,6 +49,5 @@ jobs:
         script: |
           cd story-ar/StoryAR-backend/
           git pull 
-          npm i
           npm run build
           pm2 restart 1
