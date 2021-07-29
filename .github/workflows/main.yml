@@ -34,11 +34,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
-      run: npm install
+    # - name: Install dependencies
+    #   run: npm install
 
-    - name: Generate ENV file
-      run: cp .env.example .env
+    # - name: Generate ENV file
+    #   run: cp .env.example .env
 
     - name: SSH Deployment for latest  
       uses: appleboy/ssh-action@master 
@@ -49,6 +49,8 @@ jobs:
         script: |
           cd story-ar/StoryAR-backend/
           sudo npm install pm2 -g
-          git pull 
+          git pull
+          cp .env.example .env
+          npm i
           npm run build
           sudo pm2 restart 1
