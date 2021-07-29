@@ -48,7 +48,7 @@ jobs:
         key: ${{ secrets.SERVER_PRIVATE_KEY }} 
         script: |
           cd story-ar/StoryAR-backend/
-          npm install pm2 -g
+          sudo npm install pm2 -g
           git pull 
           npm run build
-          pm2 restart 1
+          sudo pm2 restart 1
