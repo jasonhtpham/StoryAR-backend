@@ -19,31 +19,36 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
-
+    strategy:
+      matrix:
+        node-version: [14.x]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Connect to server using ssh
-        run: |
-          eval `ssh-agent`
-          mkdir -p ~/.ssh chmod 600 ~/.ssh/id_rsa && chmod 700 ~/.ssh
-          ssh-add - <<< "${{secrets.SERVER_PRIVATE_KEY}}"
-          ssh-keyscan -t rsa ec2-13-210-139-210.ap-southeast-2.compute.amazonaws.com >> ~/.ssh/known_hosts
-          ssh ubuntu@ec2-13-210-139-210.ap-southeast-2.compute.amazonaws.com
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      env:
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      with:
+        node-version: ${{ matrix.node-version }}
 
+    - name: Install dependencies
+      run: npm install
 
-      # Runs a set of commands using the runners shell
-      - name: Update changes
-        run: |
-          git pull
+    - name: Generate ENV file
+      run: cp .env.example .env
 
-      # - name: Check
-      #   run: |
-      #     pm2 status
-      
-      # Restart application
-      # - name: Restart application
-      #   run: pm2 restart Story-AR-backend
+    - name: SSH Deployment for latest  
+      uses: appleboy/ssh-action@master 
+      with: 
+        host: ${{ secrets.HOST }} 
+        username: ${{ secrets.USERNAME }}   
+        key: ${{ secrets.SERVER_PRIVATE_KEY }} 
+        script: |
+          cd story-ar/StoryAR-backend/
+          git pull 
+          npm i
+          npm run build
+          pm2 restart 1
