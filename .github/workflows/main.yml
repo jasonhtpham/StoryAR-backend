@@ -37,9 +37,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Install PM2
-      run: npm install pm2 -g
-
     - name: Generate ENV file
       run: cp .env.example .env
 
@@ -51,6 +48,7 @@ jobs:
         key: ${{ secrets.SERVER_PRIVATE_KEY }} 
         script: |
           cd story-ar/StoryAR-backend/
+          npm install pm2 -g
           git pull 
           npm run build
           pm2 restart 1
